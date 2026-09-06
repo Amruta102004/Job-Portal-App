@@ -5,14 +5,12 @@ import dns from "dns";
 import dotenv from "dotenv";
 dotenv.config();
 import connectDB from "./utils/db.js";
+import userRoute from "./routes/user.routes.js";
+
 const app = express();
 
 dns.setServers(["8.8.8.8", "8.8.4.4"]);
 
-//api
-// app.get("/", (req, res) => {
-//   res.json({ message: "Hello, World!" });
-// });
 
 //middleware
 app.use(express.json());
@@ -27,6 +25,14 @@ app.use(cors(corsOptions));
 
 
 const PORT = 5001;
+
+
+// API routes
+
+app.use("/api/user", userRoute);
+
+
+
 
 const startServer = async () => {
   try {
