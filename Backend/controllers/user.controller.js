@@ -126,7 +126,7 @@ export const login = async (req, res) => {
                 sameSite: "strict",
             })
             .json({
-                message: `Welcome ${user.fullName}`,
+                message: `Welcome back ${user.fullName}`,
                 user,
                 success: true,
             });
@@ -179,24 +179,17 @@ export const updateProfile = async (req, res) => {
             skills
         } = req.body;
 
-        const file = req.file;
+        // Get user ID from authentication middleware
+        const userId = req.userId;
 
-        // Check required fields
-        if (!fullName || !email || !phoneNumber || !bio || !skills) {
-            return res.status(400).json({
-                message: "All fields are required",
+        console.log("User ID from token:", userId);
+
+        if (!userId) {
+            return res.status(401).json({
+                message: "Unauthorized. User ID not found.",
                 success: false,
             });
         }
-
-        // Cloudinary upload will come here later
-
-
-        // Convert skills string into array
-        const skillsArray = skills.split(",");
-
-        // Get user ID from authentication middleware
-        const userId = req.userId;
 
         // Find user
         let user = await User.findById(userId);
@@ -209,21 +202,36 @@ export const updateProfile = async (req, res) => {
         }
 
         // Update user information
-        user.fullName = fullName;
-        user.email = email;
-        user.phoneNumber = phoneNumber;
+        if (fullName) {
+            user.fullName = fullName;
+        }
+
+        if (email) {
+            user.email = email;
+        }
+
+        if (phoneNumber) {
+            user.phoneNumber = phoneNumber;
+        }
 
         // Update profile information
-        user.profile.bio = bio;
-        user.profile.skills = skillsArray;
+        if (bio) {
+            user.profile.bio = bio;
+        }
 
-        // Resume upload will come here later
+        if (skills) {
+            user.profile.skills = skills
+                .split(",")
+                .map(skill => skill.trim());
+        }
+
+        // Resume / Cloudinary upload will come here later
 
 
         await user.save();
 
         // Return updated user
-        user = {
+        const updatedUser = {
             _id: user._id,
             fullName: user.fullName,
             email: user.email,
@@ -234,7 +242,7 @@ export const updateProfile = async (req, res) => {
 
         return res.status(200).json({
             message: "Profile updated successfully",
-            user,
+            user: updatedUser,
             success: true,
         });
 

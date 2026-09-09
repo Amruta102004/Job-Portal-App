@@ -1,21 +1,31 @@
 import jwt from "jsonwebtoken";
 
 const authenticateToken = async (req, res, next) => {
-    try{
+    try {
         const token = req.cookies.token;
-        if(!token){
-            return res.status(401).json({ message: "Access denied. No token provided.", success: false });
+
+        if (!token) {
+            return res.status(401).json({
+                message: "Authentication token is missing",
+                success: false,
+            });
         }
-        const decoded = await jwt.verify(token, process.env.JWT_SECRET);
-        if(!decoded){
-            return res.status(401).json({message: "Access denied. Invalid token." }),
-            success = false;
-        }
-        req.id = decoded.userId;
+
+        const decoded = jwt.verify(
+            token,
+            process.env.JWT_SECRET
+        );
+
+        req.userId = decoded.userId;
+
         next();
+
     }
     catch (error) {
-        res.status(401).json({ message: "Invalid or expired token" });
+        res.status(401).json({
+            message: "Invalid or expired token",
+            success: false
+        });
     }
 }
 
