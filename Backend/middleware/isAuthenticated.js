@@ -16,7 +16,7 @@ const authenticateToken = async (req, res, next) => {
             process.env.JWT_SECRET
         );
 
-        req.userId = decoded.userId;
+        req.id = decoded.userId;
 
         next();
 
