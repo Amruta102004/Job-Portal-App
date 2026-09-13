@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 dotenv.config();
 import connectDB from "./utils/db.js";
 import userRoute from "./routes/user.routes.js";
+import companyRoute from "./routes/company.route.js";
 
 const app = express();
 
@@ -30,8 +31,7 @@ const PORT = 5001;
 // API routes
 
 app.use("/api/user", userRoute);
-
-
+app.use("/api/company", companyRoute);
 
 
 const startServer = async () => {
