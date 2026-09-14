@@ -180,7 +180,7 @@ export const updateStatus = async (req, res) => {
         return res.status(200).json({
             message: "Application status updated",
             success: true
-        });
+        }); 
 
     } catch (error) {
         console.error("Error updating application status:", error);
